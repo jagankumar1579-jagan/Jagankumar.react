@@ -1,0 +1,319 @@
+import React, { useState } from "react";
+import "./App.css";
+
+function App() {
+  const [employees, setEmployees] = useState([]);
+  const [leaveRequests, setLeaveRequests] = useState([]);
+
+  const [employee, setEmployee] = useState({
+    id: "",
+    name: "",
+    department: "",
+  });
+
+  const [leave, setLeave] = useState({
+    empId: "",
+    leaveType: "Casual",
+    startDate: "",
+    endDate: "",
+    reason: "",
+  });
+
+  const addEmployee = () => {
+    if (
+      employee.id === "" ||
+      employee.name === "" ||
+      employee.department === ""
+    ) {
+      alert("Please fill all employee details");
+      return;
+    }
+
+    setEmployees([...employees, employee]);
+
+    setEmployee({
+      id: "",
+      name: "",
+      department: "",
+    });
+  };
+
+  const applyLeave = () => {
+    if (
+      leave.empId === "" ||
+      leave.startDate === "" ||
+      leave.endDate === ""
+    ) {
+      alert("Please fill leave details");
+      return;
+    }
+
+    setLeaveRequests([
+      ...leaveRequests,
+      {
+        ...leave,
+        status: "Pending",
+      },
+    ]);
+
+    setLeave({
+      empId: "",
+      leaveType: "Casual",
+      startDate: "",
+      endDate: "",
+      reason: "",
+    });
+  };
+
+  const updateStatus = (index, status) => {
+    const updatedRequests = [...leaveRequests];
+    updatedRequests[index].status = status;
+    setLeaveRequests(updatedRequests);
+  };
+
+  return (
+    <div className="container">
+      <h1>HR Employee Leave Management Tool</h1>
+
+      {/* Employee Form */}
+      <div className="form-section">
+        <h2>Add Employee</h2>
+
+        <input
+          type="text"
+          placeholder="Employee ID"
+          value={employee.id}
+          onChange={(e) =>
+            setEmployee({ ...employee, id: e.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Employee Name"
+          value={employee.name}
+          onChange={(e) =>
+            setEmployee({ ...employee, name: e.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Department"
+          value={employee.department}
+          onChange={(e) =>
+            setEmployee({
+              ...employee,
+              department: e.target.value,
+            })
+          }
+        />
+
+        <button onClick={addEmployee}>
+          Add Employee
+        </button>
+      </div>
+
+      {/* Leave Form */}
+      <div className="form-section">
+        <h2>Apply Leave</h2>
+
+        <input
+          type="text"
+          placeholder="Employee ID"
+          value={leave.empId}
+          onChange={(e) =>
+            setLeave({
+              ...leave,
+              empId: e.target.value,
+            })
+          }
+        />
+
+        <select
+          value={leave.leaveType}
+          onChange={(e) =>
+            setLeave({
+              ...leave,
+              leaveType: e.target.value,
+            })
+          }
+        >
+          <option>Casual</option>
+          <option>Sick</option>
+          <option>Earned</option>
+        </select>
+
+        <input
+          type="date"
+          value={leave.startDate}
+          onChange={(e) =>
+            setLeave({
+              ...leave,
+              startDate: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="date"
+          value={leave.endDate}
+          onChange={(e) =>
+            setLeave({
+              ...leave,
+              endDate: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Reason"
+          value={leave.reason}
+          onChange={(e) =>
+            setLeave({
+              ...leave,
+              reason: e.target.value,
+            })
+          }
+        />
+
+        <button onClick={applyLeave}>
+          Apply Leave
+        </button>
+      </div>
+
+      {/* Dashboard */}
+      <h2>Dashboard</h2>
+
+      <div className="dashboard">
+        <div className="card">
+          <h3>Total Employees</h3>
+          <p>{employees.length}</p>
+        </div>
+
+        <div className="card">
+          <h3>Pending</h3>
+          <p>
+            {
+              leaveRequests.filter(
+                (item) => item.status === "Pending"
+              ).length
+            }
+          </p>
+        </div>
+
+        <div className="card">
+          <h3>Approved</h3>
+          <p>
+            {
+              leaveRequests.filter(
+                (item) => item.status === "Approved"
+              ).length
+            }
+          </p>
+        </div>
+
+        <div className="card">
+          <h3>Rejected</h3>
+          <p>
+            {
+              leaveRequests.filter(
+                (item) => item.status === "Rejected"
+              ).length
+            }
+          </p>
+        </div>
+      </div>
+
+      {/* Employee List */}
+      <div className="form-section">
+        <h2>Employee List</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Department</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {employees.map((emp, index) => (
+              <tr key={index}>
+                <td>{emp.id}</td>
+                <td>{emp.name}</td>
+                <td>{emp.department}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Leave Requests */}
+      <div className="form-section">
+        <h2>Leave Requests</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Leave Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {leaveRequests.map((request, index) => (
+              <tr key={index}>
+                <td>{request.empId}</td>
+                <td>{request.leaveType}</td>
+                <td>{request.startDate}</td>
+                <td>{request.endDate}</td>
+                <td>{request.reason}</td>
+
+                <td
+                  className={
+                    request.status === "Approved"
+                      ? "approved"
+                      : request.status === "Rejected"
+                      ? "rejected"
+                      : "pending"
+                  }
+                >
+                  {request.status}
+                </td>
+
+                <td>
+                  <button
+                    onClick={() =>
+                      updateStatus(index, "Approved")
+                    }
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      updateStatus(index, "Rejected")
+                    }
+                  >
+                    Reject
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export default App;h
+
